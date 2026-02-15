@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced EMI Calculator</title>
+
+<style>
+body{
+    font-family:'Segoe UI',sans-serif;
+    background:#f4f6f9;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+    margin:0;
+    flex-direction:column;
+    transition:0.3s;
+}
+
+/* Container */
+.container{
+    background:white;
+    padding:30px;
+    border-radius:12px;
+    width:420px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.08);
+}
+
+h2{text-align:center;margin-bottom:20px;}
+label{font-size:14px;color:#444;}
+
+input[type="number"],input[type="range"]{
+    width:100%;
+    margin:6px 0 12px 0;
+}
+
+input[type="number"]{
+    padding:10px;
+    border-radius:8px;
+    border:1px solid #ccc;
+}
+
+.button-group{
+    display:flex;
+    gap:8px;
+    margin-bottom:10px;
+    flex-wrap:wrap;
+}
+
+button{
+    flex:1;
+    padding:10px;
+    border-radius:8px;
+    border:none;
+    cursor:pointer;
+    font-weight:600;
+    transition:0.2s;
+}
+
+.primary-btn{background:#2563eb;color:white;}
+.secondary-btn{background:#6b7280;color:white;}
+
+button.active{
+    box-shadow:0 0 0 2px #2563eb;
+    opacity:1;
+}
+
+button:not(.active){opacity:0.85;}
+button:active{transform:scale(0.98);}
+
+.result{
+    margin-top:15px;
+    padding:12px;
+    border-radius:8px;
+    min-height:60px;
+    font-size:14px;
+}
+
+.result.success{background:#dcfce7;color:#166534;}
+.result.error{background:#fee2e2;color:#991b1b;}
+
+.breakdown{display:none;margin-top:15px;}
+
+.bar-container{
+    background:#e5e7eb;
+    border-radius:8px;
+    overflow:hidden;
+    height:30px;
+    display:flex;
+}
+
+.bar{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:white;
+    font-size:11px;
+    font-weight:bold;
+}
+
+.principal-bar{background:#2563eb;}
+.interest-bar{background:#fbbf24;}
+
+.copy-btn{
+    margin-top:8px;
+    background:#10b981;
+    color:white;
+}
+
+footer{margin-top:20px;font-size:12px;color:#777;}
+
+/* 🌙 Fintech Dark Mode */
+.dark {
+    --bg-primary: #0A0C10;
+    --bg-surface: #14171C;
+    --bg-input: #1E2329;
+    --text-primary: #FFFFFF;
+    --text-secondary: #9AA8B9;
+    --accent-blue: #3B82F6;
+    --accent-hover: #2563EB;
+    --border-color: #2A2F36;
+
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+.dark .container {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-color);
+}
+
+.dark input[type="number"],
+.dark input[type="range"] {
+    background-color: var(--bg-input);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.dark input::placeholder {
+    color: var(--text-secondary);
+}
+
+.dark label { color: var(--text-secondary); }
+
+.dark .result.success {
+    background-color: #052e16;
+    color: #4ade80;
+}
+
+.dark .result.error {
+    background-color: #3f0d0d;
+    color: #f87171;
+}
+
+.dark .primary-btn { background-color: var(--accent-blue); }
+.dark .primary-btn:hover { background-color: var(--accent-hover); }
+
+.dark .secondary-btn {
+    background-color: #374151;
+    color: white;
+}
+
+.dark .bar-container { background-color: #2A2F36; }
+
+.dark footer { color: var(--text-secondary); }
+
+@media(max-width:480px){
+    .container{width:90%;padding:20px;}
+    input,button{font-size:16px;}
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+<h2>EMI Calculator</h2>
+
+<label>Loan Amount (₹)</label>
+<span id="sliderValue">₹1,00,000</span>
+
+<input type="range" id="principalSlider" min="100000" max="10000000" step="10000"
+oninput="syncPrincipal(); updateSliderDisplay();">
+
+<input type="number" id="principalInput" placeholder="Enter loan amount"
+oninput="syncPrincipalInput()">
+
+<label>Annual Interest Rate (%)</label>
+<input type="number" id="rate" min="0" max="30" step="0.1"
+oninput="calculateEMI()">
+
+<label>Loan Tenure (Years)</label>
+<input type="number" id="time" min="1" max="40" step="0.5"
+oninput="calculateEMI()">
+
+<label>View EMI as:</label>
+
+<div class="button-group">
+<button id="monthlyBtn" class="primary-btn active"
+onclick="setEMIMode('monthly',this)">Monthly</button>
+
+<button id="yearlyBtn" class="secondary-btn"
+onclick="setEMIMode('yearly',this)">Yearly</button>
+
+<button class="secondary-btn" onclick="resetForm()">Reset</button>
+
+<button class="secondary-btn" onclick="toggleTheme()">🌙</button>
+</div>
+
+<div class="result" id="result"></div>
+<button class="copy-btn" onclick="copyResult()">Copy Result</button>
+
+<div class="breakdown" id="breakdownChart">
+<strong style="font-size:12px;display:block;margin-bottom:8px;">Payment Breakdown:</strong>
+
+<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;">
+<span>📘 Principal</span>
+<span>📊 Interest</span>
+</div>
+
+<div class="bar-container">
+<div id="principalBar" class="bar principal-bar"></div>
+<div id="interestBar" class="bar interest-bar"></div>
+</div>
+</div>
+
+</div>
+
+<footer>© 2026 Tamanna. All rights reserved.</footer>
+
+<script>
+let emiMode='monthly';
+
+function formatCurrency(num){
+return new Intl.NumberFormat('en-IN',{
+style:'currency',
+currency:'INR',
+maximumFractionDigits:2
+}).format(num);
+}
+
+function updateSliderDisplay(){
+const value=document.getElementById("principalSlider").value;
+document.getElementById("sliderValue").textContent=
+new Intl.NumberFormat('en-IN',{style:'currency',currency:'INR',maximumFractionDigits:0}).format(value);
+}
+
+function syncPrincipal(){
+document.getElementById("principalInput").value=
+document.getElementById("principalSlider").value;
+calculateEMI();
+}
+
+function syncPrincipalInput(){
+let value=parseFloat(document.getElementById("principalInput").value);
+
+if(value>10000000){
+showError("Maximum loan amount is ₹1,00,00,000");
+document.getElementById("principalInput").value="10000000";
+return;
+}
+
+document.getElementById("principalSlider").value=value||100000;
+updateSliderDisplay();
+calculateEMI();
+}
+
+function showError(msg){
+const result=document.getElementById("result");
+result.className="result error";
+result.innerHTML=msg;
+document.getElementById("breakdownChart").style.display="none";
+}
+
+function showSuccess(html){
+const result=document.getElementById("result");
+result.className="result success";
+result.innerHTML=html;
+}
+
+function setEMIMode(mode,btn){
+emiMode=mode;
+document.querySelectorAll('.button-group button').forEach(b=>b.classList.remove('active'));
+btn.classList.add('active');
+calculateEMI();
+}
+
+function calculateEMI(){
+let P=parseFloat(document.getElementById("principalInput").value);
+let annualRate=parseFloat(document.getElementById("rate").value);
+let years=parseFloat(document.getElementById("time").value);
+
+if(!P||annualRate===""||!years){return;}
+
+let R=annualRate/12/100;
+let N=years*12;
+
+let EMI;
+
+if(P <= 0 || annualRate < 0 || years <= 0){
+showError("Please enter valid positive values.");
+return;
+}
+
+if (annualRate === 0) {
+EMI = P / N;
+} else {
+EMI = (P * R * Math.pow(1 + R, N)) / (Math.pow(1 + R, N) - 1);
+}
+
+let totalPayment=EMI*N;
+let totalInterest=totalPayment-P;
+let displayEMI=emiMode==='yearly'?EMI*12:EMI;
+
+showSuccess(`
+<strong>${emiMode==='yearly'?'Yearly':'Monthly'} EMI:</strong> ${formatCurrency(displayEMI)}<br>
+<strong>Total Interest:</strong> ${formatCurrency(totalInterest)}<br>
+<strong>Total Payment:</strong> ${formatCurrency(totalPayment)}
+`);
+
+let principalPercent=(P/totalPayment)*100;
+let interestPercent=(totalInterest/totalPayment)*100;
+
+document.getElementById("breakdownChart").style.display="block";
+document.getElementById("principalBar").style.width=principalPercent+"%";
+document.getElementById("principalBar").textContent=principalPercent.toFixed(0)+"%";
+document.getElementById("interestBar").style.width=interestPercent+"%";
+document.getElementById("interestBar").textContent=interestPercent.toFixed(0)+"%";
+}
+
+function resetForm(){
+document.getElementById("principalInput").value="";
+document.getElementById("principalSlider").value="100000";
+document.getElementById("rate").value="";
+document.getElementById("time").value="";
+document.getElementById("result").innerHTML="";
+document.getElementById("result").className="result";
+document.getElementById("breakdownChart").style.display="none";
+document.getElementById("sliderValue").textContent="₹1,00,000";
+emiMode='monthly';
+document.getElementById("monthlyBtn").classList.add("active");
+document.getElementById("yearlyBtn").classList.remove("active");
+}
+
+function copyResult(){
+let text=document.getElementById("result").innerText;
+if(!text)return;
+navigator.clipboard.writeText(text);
+alert("Result copied to clipboard!");
+}
+
+function toggleTheme(){
+document.body.classList.toggle("dark");
+}
+
+window.onload = function(){
+document.getElementById("principalSlider").value = 100000;
+syncPrincipal();
+updateSliderDisplay();
+};
+</script>
+
+</body>
+</html>
