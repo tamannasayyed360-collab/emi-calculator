@@ -1,55 +1,55 @@
-# 🏦 EMI Calculator
+# EMI Calculator
 
-A modern and responsive **EMI (Equated Monthly Installment) Calculator** built using **HTML, CSS, and JavaScript**.
+A responsive EMI (Equated Monthly Installment) Calculator built using HTML, CSS, and JavaScript.
 
-This tool helps users calculate:
-
-✔ Monthly EMI  
-✔ Total Interest Payable  
-✔ Total Payment (Principal + Interest)  
+This application allows users to calculate monthly EMI, total interest payable, and total repayment amount based on loan amount, interest rate, and tenure.
 
 Live Demo:  
 https://tamannasayyed360-collab.github.io/emi-calculator/
 
 ---
 
-## 🚀 Features
+## Overview
 
-- ✅ Instant EMI Calculation
-- ✅ Calculates Total Interest
-- ✅ Calculates Total Repayment Amount
-- ✅ Simple & Clean UI
-- ✅ Mobile Responsive Design
-- ✅ Real-time Validation
-- ✅ Accurate EMI Formula Implementation
+The EMI Calculator helps users estimate loan repayments using the standard EMI formula. It is designed with a clean user interface and accurate financial calculations.
 
 ---
 
-## 🧮 EMI Formula Used
+## Features
 
-The EMI is calculated using the standard formula:
+- Monthly EMI calculation
+- Total interest payable calculation
+- Total repayment amount calculation
+- Input validation
+- Responsive design for mobile and desktop
+- Accurate financial computation using standard formula
 
-EMI = [P × R × (1 + R)^N] / [(1 + R)^N – 1]
+---
 
+## EMI Formula
+
+The EMI is calculated using the following formula:
+
+EMI = [P × R × (1 + R)^N] / [(1 + R)^N − 1]
 
 Where:
 
-- **P** = Loan Amount  
-- **R** = Monthly Interest Rate (Annual Rate / 12 / 100)  
-- **N** = Loan Tenure in Months  
+- P = Principal Loan Amount  
+- R = Monthly Interest Rate (Annual Interest Rate / 12 / 100)  
+- N = Loan Tenure in Months  
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - HTML5
-- CSS3 (Modern Responsive Layout)
+- CSS3
 - Vanilla JavaScript
 - DOM Manipulation
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 emi-calculator/
 │
@@ -58,24 +58,31 @@ emi-calculator/
 
 ---
 
-## 🌍 Deployment
+## Deployment
 
-Deployed using GitHub Pages from the main branch.
+This project is deployed using GitHub Pages from the main branch.
+
+To deploy:
+
+1. Push the project to GitHub.
+2. Go to Repository → Settings → Pages.
+3. Select "Deploy from branch".
+4. Choose branch: main.
+5. Select folder: / (root).
+6. Save.
 
 ---
 
-## ⚠️ Disclaimer
+## Disclaimer
 
-This EMI Calculator is intended for educational and demonstration purposes only.  
-Actual loan EMI may vary based on bank policies and processing fees.
+This calculator is intended for educational and demonstration purposes only. Actual EMI values may vary depending on financial institution policies and additional charges.
 
 ---
 
-## 👩‍💻 Author
+## Author
 
 Tamanna Sayyed  
-© 2026 All Rights Reserved  
+© 2026 All Rights Reserved
 
----
 
-⭐ If you found this useful, consider giving the project a star!
+
