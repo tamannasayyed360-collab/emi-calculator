@@ -58,19 +58,9 @@ emi-calculator/
 
 ---
 
-## 🌍 Deployment (GitHub Pages)
+## 🌍 Deployment
 
-1. Push your project to GitHub.
-2. Go to **Repository → Settings → Pages**
-3. Under Source:
-   - Select "Deploy from branch"
-   - Choose `main`
-   - Folder `/ (root)`
-4. Click Save.
-
-Your project will be live at:
-
-https://tamannasayyed360-collab.github.io/emi-calculator/
+Deployed using GitHub Pages from the main branch.
 
 ---
 
